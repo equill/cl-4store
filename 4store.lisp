@@ -1,5 +1,5 @@
 ;;; :FILE-CREATED <Timestamp: #{2011-09-02T03:30:06-04:00Z}#{11355} - by MON>
-;;; :FILE sbcl-4store/workspace.lisp
+;;; :FILE sbcl-4store/4store.lisp
 ;;; ==============================
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -101,7 +101,7 @@ order by ?type")
   `(let ((drakma:*text-content-types* *4store-text-content-types*))
      ,@body))
 
-(defun put-data (content-data-pathname url-data-component)
+(defun put-data (content-data-pathname url-data-component &optional (server-url *4store-base-url*))
   "This PUTs the data file at the given URL. 
 Equivalalent of: 
  shell> curl -v -T organogram-co-2010-10-31-index.rdf \
@@ -109,12 +109,12 @@ Equivalalent of:
   (declare (string url-data-component))
   (wrapped-text-context-request
    (drakma:http-request ;; "http://localhost:8080/data/organogram-co-2010-10-31-index"
-    (concatenate 'string *4store-base-url* "data/" url-data-component)
-                        :method :put
-                        :content content-data-pathname
-                        ;; (open #p"/home/patrick/dev/sbcl-4store/organogram-co-2010-10-31-index.rdf" 
-                        ;;       :element-type '(unsigned-byte 8))
-                        :content-type "application/rdf+xml" :content-length t)))
+    (concatenate 'string server-url "data/" url-data-component)
+    :method :put
+    :content content-data-pathname
+    ;; (open #p"/home/patrick/dev/sbcl-4store/organogram-co-2010-10-31-index.rdf" 
+    ;;       :element-type '(unsigned-byte 8))
+    :content-type "application/rdf+xml" :content-length t)))
 
 (defun sparql-server-status (&optional (server-url *4store-base-url*))
   "Return the status of the 4store sparql server from lisp. 
@@ -127,25 +127,25 @@ Equivalalent of:
   "A shorthand way to remove an unwanted type of data from a list."
   (remove-if #'(lambda (x) (typep x type)) list))
 
-(defun select-rdfs-classes ()
+(defun select-rdfs-classes (&optional (server-url *4store-base-url*))
   "Select all RDFS classses in the knowledgebase. 
 Return the multiple values from the query POSTed to the knowledgebase's sparql
 http end-point.
 nth-value 0 is the body of the response in the sparql query results XML format."
   (wrapped-text-context-request
-   (drakma:http-request "http://localhost:8080/sparql/" 
+   (drakma:http-request (concatenate 'string server-url "sparql/")
                         :method :post  
-                        :parameters `(("query" . ,(gethash :rdfs-class-select *4store-query-cache*)))))
+                        :parameters `(("query" . ,(gethash :rdfs-class-select *4store-query-cache*))))))
 
 
-(defun construct-persons ()
+(defun construct-persons (&optional (server-url *4store-base-url*))
   "Select the FOAF (http://www.foaf-project.org/) Person instances with FOAF
 names, and all other triples having the Person as the subject.
 Return the multiple values from the query POSTed to the knowledgebase's sparql
 http end-point.
 nth-value 0 is a graph constructed from the selected triples in RDF/XML format."
   (wrapped-text-context-request
-   (drakma:http-request "http://localhost:8080/sparql/" 
+   (drakma:http-request (concatenate 'string server-url "sparql/")
                         :method :post  
                         :parameters `(("query" . ,(gethash :foaf-person-construct *4store-query-cache*))))))
 
