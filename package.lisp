@@ -3,14 +3,16 @@
 ;;; ==============================
 
 
-(defpackage #:4store (:use #:common-lisp 
-                           #:drakma 
-                           #:fare-matcher
-                           #:cl-rdfxml)
-            (:import-from #:puri
-                          #:render-uri
-                          #:uri-p))
+(defpackage #:4store (:use #:common-lisp ))
 
+
+;; (defpackage #:4store (:use #:common-lisp
+;;                            #:drakma 
+;;                            #:fare-matcher
+;;                            #:cl-rdfxml)
+;;             (:import-from #:puri
+;;                           #:render-uri
+;;                           #:uri-p))
 ;; ,----
 ;; | (use-package 'drakma)
 ;; | (use-package 'fare-matcher)
