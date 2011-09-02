@@ -3,8 +3,9 @@
 ;;; ==============================
 
 
-(defpackage #:4store (:use #:common-lisp ))
-
+(defpackage #:4store (:use #:common-lisp )
+            (:import-from #:fare-matcher
+                          #:_))
 
 ;; (defpackage #:4store (:use #:common-lisp
 ;;                            #:drakma 
