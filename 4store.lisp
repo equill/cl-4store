@@ -96,15 +96,21 @@ where {
 } 
 order by ?type")
 
-
 (defmacro wrapped-text-context-request (&rest body)
   `(let ((drakma:*text-content-types* *4store-text-content-types*))
      ,@body))
 
 (defun put-data (content-data-pathname url-data-component &optional (server-url *4store-base-url*))
   "This PUTs the data file at the given URL. 
+:EXAMPLE
+ \(let \(\(content/component \"organogram-co-2010-10-31-index\"\)\)
+   \(put-data 
+    \(make-pathname :name content/component
+                   :type \"rdf\"
+                   :defaults *default-pathname-defaults*\)
+    content/component\)\)
 Equivalalent of: 
- shell> curl -v -T organogram-co-2010-10-31-index.rdf \
+ shell> curl -v -T organogram-co-2010-10-31-index.rdf \\
        'http://localhost:8080/data/organogram-co-2010-10-31-index'"
   (declare (string url-data-component))
   (wrapped-text-context-request
@@ -119,6 +125,7 @@ Equivalalent of:
 (defun sparql-server-status (&optional (server-url *4store-base-url*))
   "Return the status of the 4store sparql server from lisp. 
 `drakma:http-request' returns multiple values, nth-value 1 is the numerical http status.
+:EXAMPLE
  \(sparql-server-status\)"
   ;; (nth-value 1 (drakma:http-request "http://localhost:8080/status"))
   (nth-value 1 (drakma:http-request (concatenate 'string server-url "status"))))
@@ -131,7 +138,9 @@ Equivalalent of:
   "Select all RDFS classses in the knowledgebase. 
 Return the multiple values from the query POSTed to the knowledgebase's sparql
 http end-point.
-nth-value 0 is the body of the response in the sparql query results XML format."
+nth-value 0 is the body of the response in the sparql query results XML format.
+:EXAMPLE
+ \(select-rdfs-classes\)"
   (wrapped-text-context-request
    (drakma:http-request (concatenate 'string server-url "sparql/")
                         :method :post  
@@ -143,7 +152,9 @@ nth-value 0 is the body of the response in the sparql query results XML format."
 names, and all other triples having the Person as the subject.
 Return the multiple values from the query POSTed to the knowledgebase's sparql
 http end-point.
-nth-value 0 is a graph constructed from the selected triples in RDF/XML format."
+nth-value 0 is a graph constructed from the selected triples in RDF/XML format.
+:EXAMPLE
+ \(construct-persons\)"
   (wrapped-text-context-request
    (drakma:http-request (concatenate 'string server-url "sparql/")
                         :method :post  
@@ -159,7 +170,9 @@ nth-value 0 is a graph constructed from the selected triples in RDF/XML format."
 
 (defun extract-persons ()
   "Use cl-rdfxml to parse the RDF/XML of FOAF Persons and related triples.
-Return the triples as a list of three-lists with URIs rendered as strings."
+Return the triples as a list of three-lists with URIs rendered as strings.
+:EXAMPLE
+ \(extract-persons\)"
   (let ((persons '()))
     (cl-rdfxml:parse-document #'(lambda (s p o)
                                   (push (map-uris-to-strings (list s p o))
@@ -182,7 +195,9 @@ Return the triples as a list of three-lists with URIs rendered as strings."
 Use fare-matcher:letm to pattern-match over a list structure parsed from the
 sparql XML format.
 Underscores in the pattern are 'don't care' positions. 
-The 'uri' variable is the position of interest."
+The 'uri' variable is the position of interest.
+:EXAMPLE
+ \(extract-rdfs-classes\)"
   (mapcar #'(lambda (item) 
               (fare-matcher:letm (list _ _ _ (list _ _ (list _ _ uri)) _) 
                   item 
