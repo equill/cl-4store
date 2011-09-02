@@ -7,11 +7,11 @@
 (in-package #:4store-build-system)
 
 (defsystem :4store
-  :author  "MON KEY"
-  :maintainer "MON KEY"
+  ;; :author  "Patrick D. Logan"
+  ;; :maintainer "MON KEY"
   :license "MIT" 
   :description "4store"
-  :version "1.0.0"
+  :version "0.0.1"
   :depends-on (:puri 
                :drakma 
                :cxml
