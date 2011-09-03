@@ -1,5 +1,5 @@
 ;;; :FILE-CREATED <Timestamp: #{2011-09-02T02:32:46-04:00Z}#{11355} - by MON>
-;;; :FILE /sbcl-4store-GIT/4store.asd
+;;; :FILE sbcl-4store-FORK/4store.asd
 ;;; ==============================
 
 (defpackage #:4store-build-system (:use :common-lisp :asdf))
@@ -9,19 +9,21 @@
 (defsystem :4store
   ;; :author  "Patrick D. Logan"
   ;; :maintainer "MON KEY"
-  :license "MIT" 
+  :license "BSD" 
   :description "4store"
   :version "0.0.1"
   :depends-on (:puri 
                :drakma 
                :cxml
-               :fare-matcher
-               :cl-rdfxml)
+               :cl-rdfxml
+               :fare-matcher)
   :serial t
   :components ((:file "package")
-               (:file "4store")))
-
-
+               (:file "4store-specials")
+               (:file "4store-macros")
+               (:file "4store-utils")
+               (:file "4store")
+               (:file "4store-docs"))
 
 ;;; ==============================
 ;;; EOF
