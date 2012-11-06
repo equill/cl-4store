@@ -1,7 +1,5 @@
-;;; :FILE-CREATED <Timestamp: #{2011-09-02T03:30:06-04:00Z}#{11355} - by MON>
-;;; :FILE sbcl-4store/4store.lisp
-;;; ==============================
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
 ;; This file was originally workspace.lisp and presented as a collection of
 ;; 'workspace' code for exploring a 4store RDF knowledgebase using Steel Bank
 ;; Common Lisp.
@@ -26,14 +24,12 @@
 (defun sparql-server-put-data-request (content-data-pathname url-data-component &key (server-url *4store-base-url*))
   (declare (string url-data-component))
   (wrapped-text-context-request
-   ;; (drakma:http-request "http://localhost:8080/data/organogram-co-2010-10-31-index"
    (drakma:http-request (render-url-components server-url "data/" url-data-component)
                         :method :put
                         :content content-data-pathname
                         :content-type "application/rdf+xml" :content-length t)))
 
 (defun sparql-server-status-request (&key (server-url *4store-base-url*))
-  ;; (nth-value 1 (drakma:http-request "http://localhost:8080/status"))
   (nth-value 1 (drakma:http-request (render-url-components server-url "status"))))
 
 (defun render-parsed-uri-to-string-if (uri-or-string)

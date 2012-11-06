@@ -1,16 +1,8 @@
-;;; :FILE-CREATED <Timestamp: #{2011-09-02T17:08:12-04:00Z}#{11355} - by MON>
-;;; :FILE sbcl-4store-FORK/4store-specials.lisp
-;;; ==============================
-
-
 (in-package #:4store)
 
 
 ;; Tell drakma to treat these additional types as text rather than
 ;; binary.
-;; (setq drakma:*text-content-types* (list* '("application". "sparql-results+xml")
-;;                                          '("application" . "rdf+xml")
-;;                                          drakma:*text-content-types*))
 (defvar *4store-text-content-types* 
   (list* '("application". "sparql-results+xml")
          '("application" . "rdf+xml")
@@ -41,8 +33,6 @@ where {
     ?x a ?type .
 } 
 order by ?type")
-
-
 
 ;;; ==============================
 ;;; EOF

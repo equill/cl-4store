@@ -1,5 +1,3 @@
-;;; :FILE-CREATED <Timestamp: #{2011-09-02T02:32:46-04:00Z}#{11355} - by MON>
-;;; :FILE sbcl-4store-FORK/4store.asd
 ;;; ==============================
 
 (defpackage #:4store-build-system (:use :common-lisp :asdf))
@@ -8,7 +6,7 @@
 
 (defsystem :4store
   ;; :author  "Patrick D. Logan"
-  ;; :maintainer "MON KEY"
+  ;; :maintainer "James Fleming"
   :license "BSD" 
   :description "4store"
   :version "0.0.1"

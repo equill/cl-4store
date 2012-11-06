@@ -1,8 +1,3 @@
-;;; :FILE-CREATED <Timestamp: #{2011-09-02T17:15:36-04:00Z}#{11355} - by MON>
-;;; :FILE sbcl-4store-FORK/4store-doc.lisp
-;;; ==============================
-
-
 (in-package #:4store)
 
 
