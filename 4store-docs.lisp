@@ -6,12 +6,12 @@
 ;;; ==============================
 
 (fundoc 'sparql-server-put-data-request
-        "Perfrom an HTTP put request with the data contained of CONTENT-DATA-PATHNAME.~%~@
+        "Perform an HTTP put request with the data contained of CONTENT-DATA-PATHNAME.~%~@
 CONTENT-DATA-PATHNAME should name an existing file.~%~@
-URL-DATA-COMPONENT is identifies the releative URL component of the content to put.~%~@
-Keyword SERVER-URL is the base url pathname of sparql server.~%~@
+URL-DATA-COMPONENT is identifies the relative URL component of the content to put.~%~@
+Keyword SERVER-URL is the base url pathname of the SPARQL server.~%~@
 Default is value of `*4store-base-url*'.~%~@
-The full destination of the put request is the concatatenated return value of
+The full destination of the put request is the concatenated return value of
 `render-url-components' such that the put request and has the form:~%
  <SERVER-URL>data/<URL-DATA-COMPONENT>~%~@
 :EXAMPLE~%
@@ -22,14 +22,14 @@ The full destination of the put request is the concatatenated return value of
                    :defaults *default-pathname-defaults*\)
     content/component
     :server-url \"http://localhost:8080/\"\)\)~%~@
-:NOTE equivalalent of: 
+:NOTE equivalent of: 
  shell> curl -v -T organogram-co-2010-10-31-index.rdf \\
        'http://localhost:8080/data/organogram-co-2010-10-31-index'~%~@
 :SEE-ALSO `<XREF>'.~%▶▶▶")
 
 (fundoc 'sparql-server-status-request
         "Return the status of the 4store sparql server at SERVER-URL ~%~@
-Return as if by `drakma:http-request's  multiple values.~%~@
+Return as if by `drakma:http-request's multiple values.~%~@
 nth-value 1 is the numerical http status.~%~@
 :EXAMPLE~%
  \(sparql-server-status-request\)
@@ -57,8 +57,8 @@ Helper function for `map-uris-to-strings'.~%~@
 :SEE-ALSO `<XREF>'.~%▶▶▶")
 
 (fundoc 'render-request-as-xmls
-  "Parse sparql result XML formatted string into a list structure.~%~@
-Parsing is as if by `cxml:parse'  and `cxml-xmls:make-xmls-builder'.~%~@
+  "Parse SPARQL result XML formatted string into a list structure.~%~@
+Parsing is as if by `cxml:parse' and `cxml-xmls:make-xmls-builder'.~%~@
 :EXAMPLE~%
  { ... <EXAMPLE> ... } ~%~@
 :SEE-ALSO `<XREF>'.~%▶▶▶")
@@ -66,7 +66,7 @@ Parsing is as if by `cxml:parse'  and `cxml-xmls:make-xmls-builder'.~%~@
 (fundoc 'foaf-person-construct-request
         "Select FOAF \(http://www.foaf-project.org/\) `Person` instances with FOAF
 names, and all other triples having `Person` as subject.~%~@
-Return multiple values from query POSTed to knowledgebase's sparql http end-point.~%~@
+Return multiple values from query POSTed to knowledgebase's SPARQL http end-point.~%~@
 nth-value 0 is a graph constructed from selected triples in RDF/XML format.~%~@
 :EXAMPLE~%
  \(foaf-person-construct-request\)~%~@
@@ -82,15 +82,15 @@ related triples.~%
 
 (fundoc 'rdfs-class-select-request
         "Select all RDFS classses in knowledgebase.~%~@
-Return multiple values of query POSTed to knowledgebase's sparql http end-point.~%~@
-nth-value 0 is the body of the response in sparql query results XML format.~%~@
+Return multiple values of query POSTed to knowledgebase's SPARQL HTTP end-point.~%~@
+nth-value 0 is the body of the response in SPARQL query results XML format.~%~@
 :EXAMPLE~%
  \(rdfs-class-select-request\)~%~@
 :SEE-ALSO `<XREF>'.~%▶▶▶")
 
 (fundoc 'rdfs-class-uri-match
         "Match URIs in ITEM. 
-ITEM is a list structure parsed from the sparql XML format.~%~@
+ITEM is a list structure parsed from the SPARQL XML format.~%~@
 URI are identified by pattern matching with `fare-matcher:letm'.~%~@
 :EXAMPLE~%
  { ... <EXAMPLE> ... } ~%~@
