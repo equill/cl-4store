@@ -31,13 +31,20 @@
 (defun sparql-server-status-request (server-url)
   (nth-value 1 (drakma:http-request (render-url-components server-url "status"))))
 
-(defun sparql-query (server-url query)
+(defun sparql-query (server-url query &key (method :get))
   "Send a SPARQL query to the server, and return the result.
-  Expects a valid SPARQL query for its second argument, in the form of a text string."
+Expects a valid SPARQL query for its second argument, in the form of a text string.
+Uses GET by default, but the :method keyword argument can be used to force POST, PUT, DELETE or whatever other method tickles your fancy."
   (wrapped-text-context-request
    (drakma:http-request (render-url-components server-url "sparql/")
-			:method :post  
+			:method method
 			:parameters `(("query" . ,query)))))
+
+(defun foaf-person-construct-request (&key (server-url *4store-base-url*))
+  (sparql-query server-url (gethash :foaf-person-construct *4store-query-cache*) :method :post))
+
+(defun rdfs-class-select-request (&key (server-url *4store-base-url*))
+  (sparql-query server-url (gethash :rdfs-class-select *4store-query-cache*) :method :post))
 
 (defun render-parsed-uri-to-string-if (uri-or-string)
   (if (puri:uri-p uri-or-string)
@@ -50,12 +57,6 @@
 
 (defun render-request-as-xmls (xml-result)
   (cxml:parse xml-result (cxml-xmls:make-xmls-builder)))
-
-(defun foaf-person-construct-request (&key (server-url *4store-base-url*))
-  (sparql-query server-url (gethash :foaf-person-construct *4store-query-cache*)))
-
-(defun rdfs-class-select-request (&key (server-url *4store-base-url*))
-  (sparql-query server-url (gethash :rdfs-class-select *4store-query-cache*)))
 
 (defun foaf-person-construct-extract ()
   (let ((extracted-persons '()))
