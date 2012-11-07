@@ -40,6 +40,12 @@ Uses GET by default, but the :method keyword argument can be used to force POST,
 			:method method
 			:parameters `(("query" . ,query)))))
 
+(defun get-triples-list (server-url)
+  "Retrieves all triples in the store.
+Useful for smoke-testing; use with caution, because it returns _everything_."
+  (sparql-query server-url "select ?subject ?predicate ?object
+where { ?subject ?predicate ?object }"))
+
 (defun foaf-person-construct-request (&key (server-url *4store-base-url*))
   (sparql-query server-url (gethash :foaf-person-construct *4store-query-cache*) :method :post))
 
