@@ -35,10 +35,10 @@
   "Send a SPARQL query to the server, and return the result.
 Expects a valid SPARQL query for its second argument, in the form of a text string.
 Uses GET by default, but the :method keyword argument can be used to force POST, PUT, DELETE or whatever other method tickles your fancy."
-  (wrapped-text-context-request
-   (drakma:http-request (render-url-components server-url "sparql/")
-			:method method
-			:parameters `(("query" . ,query)))))
+  (let ((drakma:*text-content-types* *4store-text-content-types*))
+    (drakma:http-request (render-url-components server-url "sparql/")
+			 :method method
+			 :parameters `(("query" . ,query)))))
 
 (defun get-triples-list (server-url)
   "Retrieves all triples in the store.
