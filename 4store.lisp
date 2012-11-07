@@ -18,7 +18,6 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 (in-package #:4store)  
 
 (defun sparql-server-put-data-request (server-url content-data-pathname url-data-component)
@@ -31,6 +30,14 @@
 
 (defun sparql-server-status-request (server-url)
   (nth-value 1 (drakma:http-request (render-url-components server-url "status"))))
+
+(defun sparql-query (server-url query)
+  "Send a SPARQL query to the server, and return the result.
+  Expects a valid SPARQL query for its second argument, in the form of a text string."
+  (wrapped-text-context-request
+   (drakma:http-request (render-url-components server-url "sparql/")
+			:method :post  
+			:parameters `(("query" . ,query)))))
 
 (defun render-parsed-uri-to-string-if (uri-or-string)
   (if (puri:uri-p uri-or-string)
@@ -45,10 +52,10 @@
   (cxml:parse xml-result (cxml-xmls:make-xmls-builder)))
 
 (defun foaf-person-construct-request (&key (server-url *4store-base-url*))
-  (wrapped-text-context-request
-   (drakma:http-request (render-url-components server-url "sparql/")
-                        :method :post  
-                        :parameters `(("query" . ,(gethash :foaf-person-construct *4store-query-cache*))))))
+  (sparql-query server-url (gethash :foaf-person-construct *4store-query-cache*)))
+
+(defun rdfs-class-select-request (&key (server-url *4store-base-url*))
+  (sparql-query server-url (gethash :rdfs-class-select *4store-query-cache*)))
 
 (defun foaf-person-construct-extract ()
   (let ((extracted-persons '()))
@@ -58,12 +65,6 @@
       (cl-rdfxml:parse-document #'render-parsed-persons  (foaf-person-construct-request)))
     ;; `cl:nreverse' keeps same order as RDF/XML
     (setf extracted-persons (nreverse extracted-persons))))
-
-(defun rdfs-class-select-request (&key (server-url *4store-base-url*))
-  (wrapped-text-context-request
-   (drakma:http-request (render-url-components server-url "sparql/")
-                        :method :post  
-                        :parameters `(("query" . ,(gethash :rdfs-class-select *4store-query-cache*))))))
 
 (defun rdfs-class-select-render-as-xmls (request-data)
   (render-request-as-xmls request-data))
