@@ -1,8 +1,5 @@
-
-4store is an efficient, scalable, and stable RDF database.
-
-http://4store.org/
-https://github.com/garlik/4store.git
+4store is an efficient, scalable, and stable RDF database.  
+For more information, see their website: http://4store.org/
 
 The code contained of this repository was originally provided as collection of
 'workspace' code for exploring a 4store RDF knowledgebase using Common Lisp.
@@ -16,17 +13,22 @@ Some discussion of the rationale and presentation of its usage is prvided here:
 Note, although the system name is prefixed by "sbcl-" there is currently nothing
 limiting use of this system with implementatons other than SBCL...
 
-We spent a bit of effort to write a proper system definition in order to make
+mon-key spent a bit of effort to write a proper system definition in order to make
 sbcl-4store loadable from Quicklisp. In the process we've also significanly
 altered the original sources, all changes retain the original BSD license see
 the file COPYING in this same repository.
+
+I'm now turning it into a library on which other libraries can be built, on top
+of which all sorts of applications can be written.
 
 Using sbcl-4store will require a working installation of 4store.
 4store has few dependencies but does require a fairly recent build of raptor2
 and rasqal see: http://librdf.org/raptor/
 
-We've successfully installed 4store from recent sources to two linux distros:
-  Slackware-13 and Fedora-15
+We've successfully installed 4store from recent sources to three linux distros:
+  Slackware-13
+  Fedora-15
+  Ubuntu-12.04 (LTS)
 
 There are some directions for installing 4store on Ubuntu at Patrick Logan's blog:
 http://patricklogan.blogspot.com/2011/03/building-4store-on-ubuntu-1010.html
@@ -74,7 +76,7 @@ following URL: http://localhost:8080/status/
 Likewise, from Lisp we can query the server status with
 `sparql-server-status-request':
 
- (sparql-server-status-request :server-url "http://localhost:8080/")
+ (sparql-server-status-request "http://localhost:8080/")
  ;=> 200
 
 Above we passed a value for the :server-url keyword. 
