@@ -21,7 +21,7 @@
 
 (in-package #:4store)  
 
-(defun sparql-server-put-data-request (content-data-pathname url-data-component &key (server-url *4store-base-url*))
+(defun sparql-server-put-data-request (server-url content-data-pathname url-data-component)
   (declare (string url-data-component))
   (wrapped-text-context-request
    (drakma:http-request (render-url-components server-url "data/" url-data-component)
@@ -29,7 +29,7 @@
                         :content content-data-pathname
                         :content-type "application/rdf+xml" :content-length t)))
 
-(defun sparql-server-status-request (&key (server-url *4store-base-url*))
+(defun sparql-server-status-request (server-url)
   (nth-value 1 (drakma:http-request (render-url-components server-url "status"))))
 
 (defun render-parsed-uri-to-string-if (uri-or-string)
