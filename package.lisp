@@ -4,6 +4,7 @@
 		:_)
   (:export sparql-query
 	   sparql-server-put-data-request
+	   insert-triple
 	   ;; Subject to deprecation
 	   ;; - these may not belong here.
 	   sparql-server-status-request

@@ -52,6 +52,35 @@ where { ?subject ?predicate ?object }"))
 (defun rdfs-class-select-request (&key (server-url *4store-base-url*))
   (sparql-query server-url (gethash :rdfs-class-select *4store-query-cache*) :method :post))
 
+(defun sparql-update (server-url graph data &key (method :post))
+  "Send a SPARQL update request to the server, and return the result.
+Expects a valid SPARQL query for its second argument, in the form of a text string.
+Uses GET by default, but the :method keyword argument can be used to force POST, PUT, DELETE or whatever other method tickles your fancy."
+  (drakma:http-request (render-url-components server-url "data/")
+		       :method method
+		       :parameters `(("data" . ,data)
+				     ("graph" . ,graph)
+				     ("mime-type" . "application/x-turtle"))))
+
+(defun insert-triple (server-url graph subject predicate object)
+  "Inserts a single triple into the connected store."
+  (sparql-update server-url
+		 graph
+		(format nil "~A ~A ~A"
+			subject predicate object)))
+
+;; DELETE ME
+;; This function is here _strictly_ for testing, and needs to be
+;; obviated and removed as soon as possible.
+#+(or)
+(defun test-insert-triple ()
+  (4store::insert-triple
+   "http://localhost:8080/"
+   "demo"
+   "<http://www.electronic-quill.net/foo/s>"
+   "<http://www.electronic-quill.net/bar/p>"
+   "<http://www.electronic-quill.net/baz/o>"))
+
 (defun render-parsed-uri-to-string-if (uri-or-string)
   (if (puri:uri-p uri-or-string)
       (with-output-to-string (as-rendered)
