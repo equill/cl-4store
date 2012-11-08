@@ -69,18 +69,6 @@ Uses GET by default, but the :method keyword argument can be used to force POST,
 		(format nil "~A ~A ~A"
 			subject predicate object)))
 
-;; DELETE ME
-;; This function is here _strictly_ for testing, and needs to be
-;; obviated and removed as soon as possible.
-#+(or)
-(defun test-insert-triple ()
-  (4store::insert-triple
-   "http://localhost:8080/"
-   "demo"
-   "<http://www.electronic-quill.net/foo/s>"
-   "<http://www.electronic-quill.net/bar/p>"
-   "<http://www.electronic-quill.net/baz/o>"))
-
 (defun render-parsed-uri-to-string-if (uri-or-string)
   (if (puri:uri-p uri-or-string)
       (with-output-to-string (as-rendered)
