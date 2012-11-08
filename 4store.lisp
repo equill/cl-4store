@@ -62,12 +62,26 @@ Uses GET by default, but the :method keyword argument can be used to force POST,
 				     ("graph" . ,graph)
 				     ("mime-type" . "application/x-turtle"))))
 
+(defun angle-bracket-delimited-p (str)
+  "Detects whether a string is delimited by angle-brackets."
+  (cl-ppcre:scan "^<[:\\w]+>$" str))
+
+(defun quote-plaintext (str)
+  "Wraps the string in quotes if it isn't delimited by angle-brackets.
+Intended for the object of a triple on insertion."
+  (if (angle-bracket-delimited-p str)
+      str
+    (cl-ppcre:regex-replace
+     "$"
+     (cl-ppcre:regex-replace "^" str "\"")
+     "\"")))
+
 (defun insert-triple (server-url graph subject predicate object)
   "Inserts a single triple into the connected store."
   (sparql-update server-url
 		 graph
 		(format nil "~A ~A ~A"
-			subject predicate object)))
+			subject predicate (quote-plaintext object))))
 
 (defun render-parsed-uri-to-string-if (uri-or-string)
   (if (puri:uri-p uri-or-string)

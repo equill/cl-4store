@@ -4,6 +4,7 @@
   (4store::insert-triple
    "http://localhost:8080/"
    "demo"
-   "<http://www.electronic-quill.net/foo/s>"
-   "<http://www.electronic-quill.net/bar/p>"
-   "<http://www.electronic-quill.net/baz/o>"))
+   "<ox-subjects:foo>"
+   "<ox-predicates:bar>"
+   "plaintext"))
+
