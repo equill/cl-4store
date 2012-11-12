@@ -1,17 +1,10 @@
 4store is an efficient, scalable, and stable RDF database.  
 For more information, see their website: http://4store.org/
 
-The code contained of this repository was originally provided as collection of
-'workspace' code for exploring a 4store RDF knowledgebase using Common Lisp.
-
-It is forked from Patrick D. Logan github at:
-  https://github.com/patrickdlogan/sbcl-4store
-
-Some discussion of the rationale and presentation of its usage is prvided here:
- http://patricklogan.blogspot.com/2011/04/using-sparql-endpoints-and-4store-rdf.html
-
-Note, although the system name is prefixed by "sbcl-" there is currently nothing
-limiting use of this system with implementatons other than SBCL...
+The code contained of this repository was originally provided by Patrick D. Logan
+as a collection of 'workspace' code for exploring a 4store RDF knowledgebase
+using Common Lisp. His original project can be found on Github:
+https://github.com/patrickdlogan/sbcl-4store
 
 mon-key spent a bit of effort to write a proper system definition in order to make
 sbcl-4store loadable from Quicklisp. In the process we've also significanly
@@ -21,165 +14,14 @@ the file COPYING in this same repository.
 I'm now turning it into a library on which other libraries can be built, on top
 of which all sorts of applications can be written.
 
-Using sbcl-4store will require a working installation of 4store.
-4store has few dependencies but does require a fairly recent build of raptor2
-and rasqal see: http://librdf.org/raptor/
+Note, although the system name is prefixed by "sbcl-" there is currently nothing
+limiting use of this system with implementatons other than SBCL...
 
-We've successfully installed 4store from recent sources to three linux distros:
-  Slackware-13
-  Fedora-15
-  Ubuntu-12.04 (LTS)
+Using sbcl-4store will require a working installation of 4store. It also assumes that you've compiled it with the '--enable-dedup-insert' argument to 'configure'
 
-There are some directions for installing 4store on Ubuntu at Patrick Logan's blog:
-http://patricklogan.blogspot.com/2011/03/building-4store-on-ubuntu-1010.html
-
-sbcl-4store has dependencies on the following Quicklisp installable systems:
+sbcl-4store has dependencies on the following Quicklisp-installable systems:
  puri
  drakma
  cxml
  cl-rdfxml
  fare-matcher
-
-To install sbcl-4store cd to where you keep your git repos and clone sbcl-4store:
-I store my repos somewhere beneath $DEVHOME your path will obv. vary :)
-
- shell> cd $DEVHOME/CL-repo-HG/CL-MON-CODE/
-
- shell> git clone git://github.com/mon-key/sbcl-4store.git
-
-In order for Quicklisp to find the ASDF in your sbcl-4store repo you need to put
-its pathname on the asdf:*central-registry*:
-
- CL-USER> (push #P"/directory/cointaing/sbcl-4store/" asdf:*central-registry*)
- CL-USER> (quicklisp:quickload 'sbcl-4store)
-
-Your Common Lisp environment should now be ready for interaction with 4store.
-
-Assuming 4store is installed we need to initialize it and create a new 4store
-knowledgebase:
-
- shell> 4s-backend-setup sample
-
-Start the knowledgebase server as a daemon:
-
- shell> 4s-backend sample
-
-Start a sparql endpoint http server for the knowledgebase:
- shell> 4s-httpd  -p 8080 -D sample
-
-The -D flag prevents the http server from daemonizing in order to see messages
-interactively.
-
-You can examine the status of the (empty) KB by pointing a web browser at the
-following URL: http://localhost:8080/status/
-
-Likewise, from Lisp we can query the server status with
-`sparql-server-status-request':
-
- (sparql-server-status-request "http://localhost:8080/")
- ;=> 200
-
-Above we passed a value for the :server-url keyword. 
-In this case we could have left it off as "http://localhost:8080/" is the default.
-
-The sbcl-4store git repo contains an RDF/XML data file: 
- organogram-co-2010-10-31-index.rdf
-
-Its contents were sourced from:
- http://source.data.gov.uk/data/reference/organogram-co/2010-10-31/index.rdf
-Other formats are also available there.
-
-We will use the rdf file here populate a 4store KB.
-We could use Curl with a PUT to do this in the manner shown below:
-
- shell> curl -v -T organogram-co-2010-10-31-index.rdf \
-       'http://localhost:8080/data/organogram-co-2010-10-31-index'
-
-But using Curl would be silly -- Common Lisp has Drakma! 
-Instead we do similarly with `sparql-server-put-data-request':
-
- (sparql-server-put-data-request 
-  #P"/path/to/organogram-co-2010-10-31-index.rdf"
-  "organogram-co-2010-10-31-index")
-
-Note, this time we did not pass a value for the :server-url keyword.
-
-Following exmaples and discussion below are taken verbatim from Patrick
-D. Logan's blog post:
- "Using SPARQL endpoints and 4store RDF databases from Common Lisp"
-See http://patricklogan.blogspot.com/2011/04/using-sparql-endpoints-and-4store-rdf.html
-
-Note however that the following examples use different function names.
-
-The function RDFS-CLASS-SELECT-EXTRACT performs a SPARQL "select" query to
-select all of the RDFS classes from the sample data. Note: these are not
-'object-oriented classes', rather an RDFS class is more like the identifier of a
-logical "set" of members which are themselves identifiers.
-
-The SPARQL query is:
-
-    prefix rdf: 
-    prefix rdfs: 
-    select distinct ?type 
-    where { 
-      ?x a ?type .
-    } 
-    order by ?type
-
-And running it from the lisp REPL:
-
- CL-USER> (rdfs-class-select-extract)
-          => ("http://purl.org/linked-data/cube#DataSet"
-              "http://purl.org/linked-data/cube#DataStructureDefinition"
-              "http://purl.org/linked-data/cube#Observation"
-              "http://purl.org/net/opmv/ns#Artifact" "http://purl.org/net/opmv/ns#Process"
-              "http://purl.org/net/opmv/types/google-refine#OperationDescription"
-              "http://purl.org/net/opmv/types/google-refine#Process"
-              "http://purl.org/net/opmv/types/google-refine#Project"
-              "http://rdfs.org/ns/void#Dataset"
-              "http://reference.data.gov.uk/def/central-government/AssistantParliamentaryCounsel"
-              "http://reference.data.gov.uk/def/central-government/CivilServicePost"
-              "http://reference.data.gov.uk/def/central-government/Department"
-              "http://reference.data.gov.uk/def/central-government/DeputyDirector"
-               ...)
-
-The function FOAF-PERSON-CONSTRUCT-REQUEST performs a SPARQL "construct" query
-to construct a graph of FOAF Person instances along with their FOAF names and
-other triples having the instance as the subject.
-
-The SPARQL query is:
-
-    prefix foaf: 
-    construct {
-      ?person 
-        a foaf:Person ;
-        foaf:name ?name ;
-        ?prop ?value .
-    } where { 
-      ?person a foaf:Person ;
-      foaf:name ?name ;
-      ?prop ?value .                        
-    }
-
-And running it from the lisp REPL:
-
- CL-USER> (foaf-person-construct-extract)
-          => (("http://source.data.gov.uk/data/reference/organogram-co/2010-10-31#person189"
-               "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-               "http://xmlns.com/foaf/0.1/Person")
-              ("http://source.data.gov.uk/data/reference/organogram-co/2010-10-31#person189"
-               "http://xmlns.com/foaf/0.1/name" #<"Philip Davies"@en>)
-              ("http://source.data.gov.uk/data/reference/organogram-co/2010-10-31#person189"
-               "http://reference.data.gov.uk/def/central-government/holdsPost"
-               "http://reference.data.gov.uk/id/department/co/post/190")
-              ("http://source.data.gov.uk/data/reference/organogram-co/2010-10-31#person189"
-               "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-               "http://xmlns.com/foaf/0.1/Person")
-              ("http://source.data.gov.uk/data/reference/organogram-co/2010-10-31#person189"
-               "http://xmlns.com/foaf/0.1/name" #<"Philip Davies"@en>)
-              ("http://source.data.gov.uk/data/reference/organogram-co/2010-10-31#person189"
-               "http://xmlns.com/foaf/0.1/mbox"
-               "mailto:philip.j.davies@cabinet-office.x.gsi.gov.uk")
-              ("http://source.data.gov.uk/data/reference/organogram-co/2010-10-31#person189"
-               "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-               "http://xmlns.com/foaf/0.1/Person"))
