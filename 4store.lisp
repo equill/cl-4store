@@ -38,6 +38,7 @@ Uses GET by default, but the :method keyword argument can be used to force POST,
   (let ((drakma:*text-content-types* *4store-text-content-types*))
     (drakma:http-request (concatenate 'string server-url "sparql/")
 			 :method method
+			 :accept "text"
 			 :parameters `(("query" . ,query)))))
 
 (defun get-triples-list (server-url)
