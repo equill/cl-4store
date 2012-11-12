@@ -8,7 +8,8 @@
 	   ;; Subject to deprecation
 	   ;; - these may not belong here.
 	   sparql-server-status-request
-	   get-triples-list))
+	   get-triples-list
+	   delete-graph))
 
 (defpackage :4store-tests
   (:use :common-lisp))

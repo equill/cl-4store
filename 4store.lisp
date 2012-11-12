@@ -90,6 +90,13 @@ The 'triples argument is expected to be a list of proper lists containing subjec
 			   triples)
 		   outstr)))
 
+(defun delete-graph (server-url graph-name)
+  "Deletes the identified graph.
+Reference command:
+curl -X DELETE 'http://localhost:8000/data/?graph=http%3A%2F%2Fexample.com%2Fdata'"
+  (drakma:http-request (concatenate 'string server-url "data/?graph=" graph-name)
+		       :method :delete))
+
 (defun render-parsed-uri-to-string-if (uri-or-string)
   (if (puri:uri-p uri-or-string)
       (with-output-to-string (as-rendered)
