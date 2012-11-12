@@ -76,12 +76,19 @@ Intended for the object of a triple on insertion."
      (cl-ppcre:regex-replace "^" str "\"")
      "\"")))
 
-(defun insert-triple (server-url graph subject predicate object)
-  "Inserts a single triple into the connected store."
+(defun insert-triples (server-url graph triples)
+  "Inserts a list of triples into the connected store.
+The 'triples argument is expected to be a list of proper lists containing subject, predicate and object"
   (sparql-update server-url
 		 graph
-		(format nil "~A ~A ~A"
-			subject predicate (quote-plaintext object))))
+		 (with-output-to-string
+		   (outstr)
+		   (mapcar #'(lambda (triple)
+			       (format outstr "~A ~A ~A .~%"
+				       (first triple)
+				       (second triple) (quote-plaintext (third triple))))
+			   triples)
+		   outstr)))
 
 (defun render-parsed-uri-to-string-if (uri-or-string)
   (if (puri:uri-p uri-or-string)
