@@ -11,8 +11,8 @@ CONTENT-DATA-PATHNAME should name an existing file.~%~@
 URL-DATA-COMPONENT is identifies the relative URL component of the content to put.~%~@
 Keyword SERVER-URL is the base url pathname of the SPARQL server.~%~@
 Default is value of `*4store-base-url*'.~%~@
-The full destination of the put request is the concatenated return value of
-`render-url-components' such that the put request and has the form:~%
+The full destination of the put request is the concatenation of the supplied URL components
+ such that the put request has the form:~%
  <SERVER-URL>data/<URL-DATA-COMPONENT>~%~@
 :EXAMPLE~%
  \(let \(\(content/component \"organogram-co-2010-10-31-index\"\)\)
@@ -101,15 +101,6 @@ URI are identified by pattern matching with `fare-matcher:letm'.~%~@
 :EXAMPLE~%
  \(rdfs-class-select-extract\)~%~@
 :SEE-ALSO `<XREF>'.~%▶▶▶")
-
-(fundoc 'render-url-components
-"Return COMPONENTS rendered as URL string for use with `drakma:http-request'.~%~@
-:EXAMPLE~%
- \(render-url-components \"http://localhost:8080/\"
-                        \"data/\" 
-                        \"organogram-co-2010-10-31-index\"\)~%~@
-:SEE-ALSO `<XREF>'.~%▶▶▶")
-
 
 ;;; ==============================
 ;;; EOF

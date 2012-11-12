@@ -1,10 +1,5 @@
 (in-package #:4store)
 
-;; Usage:
-;; (render-url-components  "http://localhost:8080/" "data/" "organogram-co-2010-10-31-index")
-(defun render-url-components (&rest components)
-  (format nil "~{~A~}" components))
-
 (defun remove-if-typep (type list)
   (remove-if #'(lambda (x) (typep x type)) list))
 

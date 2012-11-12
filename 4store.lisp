@@ -23,20 +23,20 @@
 (defun sparql-server-put-data-request (server-url content-data-pathname url-data-component)
   (declare (string url-data-component))
   (wrapped-text-context-request
-   (drakma:http-request (render-url-components server-url "data/" url-data-component)
+   (drakma:http-request (concatenate 'string server-url "data/" url-data-component)
                         :method :put
                         :content content-data-pathname
                         :content-type "application/rdf+xml" :content-length t)))
 
 (defun sparql-server-status-request (server-url)
-  (nth-value 1 (drakma:http-request (render-url-components server-url "status"))))
+  (nth-value 1 (drakma:http-request (concatenate 'string server-url "status"))))
 
 (defun sparql-query (server-url query &key (method :get))
   "Send a SPARQL query to the server, and return the result.
 Expects a valid SPARQL query for its second argument, in the form of a text string.
 Uses GET by default, but the :method keyword argument can be used to force POST, PUT, DELETE or whatever other method tickles your fancy."
   (let ((drakma:*text-content-types* *4store-text-content-types*))
-    (drakma:http-request (render-url-components server-url "sparql/")
+    (drakma:http-request (concatenate 'string server-url "sparql/")
 			 :method method
 			 :parameters `(("query" . ,query)))))
 
@@ -56,7 +56,7 @@ where { ?subject ?predicate ?object }"))
   "Send a SPARQL update request to the server, and return the result.
 Expects a valid SPARQL query for its second argument, in the form of a text string.
 Uses GET by default, but the :method keyword argument can be used to force POST, PUT, DELETE or whatever other method tickles your fancy."
-  (drakma:http-request (render-url-components server-url "data/")
+  (drakma:http-request (concatenate 'string server-url "data/")
 		       :method method
 		       :parameters `(("data" . ,data)
 				     ("graph" . ,graph)
