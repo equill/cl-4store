@@ -42,11 +42,11 @@ The full destination of the put request is the concatenation of the supplied URL
  shell> curl -v -T organogram-co-2010-10-31-index.rdf \\
        'http://localhost:8080/data/organogram-co-2010-10-31-index'"
   (declare (string url-data-component))
-  (wrapped-text-context-request
-   (drakma:http-request (concatenate 'string server-url "data/" url-data-component)
-                        :method :put
-                        :content content-data-pathname
-                        :content-type "application/rdf+xml" :content-length t)))
+  (let ((drakma:*text-content-types* *4store-text-content-types*))
+    (drakma:http-request (concatenate 'string server-url "data/" url-data-component)
+			 :method :put
+			 :content content-data-pathname
+			 :content-type "application/rdf+xml" :content-length t)))
 
 (defun sparql-server-status-request (server-url)
   "Returns the numeric HTTP status code from the server.

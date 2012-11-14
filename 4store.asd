@@ -14,7 +14,6 @@
   :serial t
   :components ((:file "package")
                (:file "4store-specials")
-               (:file "4store-macros")
                (:file "4store-utils")
                (:file "4store")))
 
