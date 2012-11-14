@@ -21,6 +21,26 @@
 (in-package #:4store)  
 
 (defun sparql-server-put-data-request (server-url content-data-pathname url-data-component)
+  "Perform an HTTP put request with the data contained in a file.
+Arguments:
+- the base url pathname of the SPARQL server
+- the path to the file
+- relative URL component (i.e, the graph name)
+
+The full destination of the put request is the concatenation of the supplied URL components
+ such that the put request has the form:
+ <SERVER-URL>data/<URL-DATA-COMPONENT>
+:EXAMPLE
+ \(let \(\(content/component \"organogram-co-2010-10-31-index\"\)\)
+   \(sparql-server-put-data-request
+    \(make-pathname :name content/component
+                   :type \"rdf\"
+                   :defaults *default-pathname-defaults*\)
+    content/component
+    :server-url \"http://localhost:8080/\"\)\)
+:NOTE equivalent of: 
+ shell> curl -v -T organogram-co-2010-10-31-index.rdf \\
+       'http://localhost:8080/data/organogram-co-2010-10-31-index'"
   (declare (string url-data-component))
   (wrapped-text-context-request
    (drakma:http-request (concatenate 'string server-url "data/" url-data-component)
@@ -29,6 +49,8 @@
                         :content-type "application/rdf+xml" :content-length t)))
 
 (defun sparql-server-status-request (server-url)
+  "Returns the numeric HTTP status code from the server.
+If all is well, the return code will be 200 (for OK)."
   (nth-value 1 (drakma:http-request (concatenate 'string server-url "status"))))
 
 (defun sparql-query (server-url query &key (method :get) (accept "sparql"))
@@ -50,12 +72,6 @@ The :accept keyword allows you to specify which return format to request from 4s
 Useful for smoke-testing; use with caution, because it returns _everything_."
   (sparql-query server-url "select ?subject ?predicate ?object
 where { ?subject ?predicate ?object }"))
-
-(defun foaf-person-construct-request (&key (server-url *4store-base-url*))
-  (sparql-query server-url (gethash :foaf-person-construct *4store-query-cache*) :method :post))
-
-(defun rdfs-class-select-request (&key (server-url *4store-base-url*))
-  (sparql-query server-url (gethash :rdfs-class-select *4store-query-cache*) :method :post))
 
 (defun sparql-update (server-url graph data &key (method :post))
   "Send a SPARQL update request to the server, and return the result.
@@ -107,3 +123,4 @@ Reference command:
 curl -X DELETE 'http://localhost:8000/data/?graph=http%3A%2F%2Fexample.com%2Fdata'"
   (drakma:http-request (concatenate 'string server-url "data/?graph=" graph-name)
 		       :method :delete))
+

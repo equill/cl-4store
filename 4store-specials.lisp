@@ -14,19 +14,6 @@
 
 (defvar *4store-query-cache* (make-hash-table))
 
-(setf (gethash :foaf-person-construct *4store-query-cache*)
-      "prefix foaf: <http://xmlns.com/foaf/0.1/>
-construct {
-  ?person 
-    a foaf:Person ;
-    foaf:name ?name ;
-    ?prop ?value .
-} where { 
-  ?person a foaf:Person ;
-    foaf:name ?name ;
-    ?prop ?value .                        
-}")
-
 (setf (gethash :rdfs-class-select *4store-query-cache*)
 "prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -36,5 +23,3 @@ where {
 } 
 order by ?type")
 
-;;; ==============================
-;;; EOF
