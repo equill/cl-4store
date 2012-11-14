@@ -10,11 +10,7 @@
   :license "BSD" 
   :description "4store"
   :version "0.0.1"
-  :depends-on (:puri 
-               :drakma 
-               :cxml
-               :cl-rdfxml
-               :fare-matcher)
+  :depends-on (:drakma)
   :serial t
   :components ((:file "package")
                (:file "4store-specials")

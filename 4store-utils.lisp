@@ -20,50 +20,6 @@ Intended for the object of a triple on insertion."
         (puri:render-uri uri-or-string as-rendered))
       uri-or-string))
 
-(defun map-uris-to-strings (list)
-  (mapcar #'render-parsed-uri-to-string-if list))
-
-(defun render-request-as-xmls (xml-result)
-  (cxml:parse xml-result (cxml-xmls:make-xmls-builder)))
-
-(defun foaf-person-construct-extract ()
-  (let ((extracted-persons '()))
-    (flet ((render-parsed-persons (s p o)
-             (push (map-uris-to-strings (list s p o))
-                   extracted-persons)))
-      (cl-rdfxml:parse-document #'render-parsed-persons  (foaf-person-construct-request)))
-    ;; `cl:nreverse' keeps same order as RDF/XML
-    (setf extracted-persons (nreverse extracted-persons))))
-
-(defun rdfs-class-select-render-as-xmls (request-data)
-  (render-request-as-xmls request-data))
-
-(defun rdfs-class-select-row-data-extract (rendered-xmls)
-  (row-extract (data-extract rendered-xmls)))
-
-(defun rdfs-class-select-string-filter (extracted-row-data)
-  (remove-if-typep 'string extracted-row-data))
-
-(defun rdfs-class-uri-match (item)
-  ;; Underscores in pattern are "don't care" positions.
-  ;; The 'uri' variable is the position of interest.
-  (fare-matcher:letm (list _ _ _ (list _ _  (list _ _ uri)) _) 
-                     item 
-                     uri))
-
-(defun rdfs-class-uri-match-map (filtered-data)
-  (mapcar #'rdfs-class-uri-match filtered-data))
-
-(defun rdfs-class-select-extract ()
-  (rdfs-class-uri-match-map
-   (rdfs-class-select-string-filter    
-    (rdfs-class-select-row-data-extract
-     (rdfs-class-select-render-as-xmls 
-      (rdfs-class-select-request))))))
-
-(defun remove-if-typep (type list)
-  (remove-if #'(lambda (x) (typep x type)) list))
-
 ;; From mon-key:
 ;;
 ;; Workspace.lisp originally set the symbol-function of `extract-data' and

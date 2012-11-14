@@ -1,7 +1,7 @@
 (defpackage :4store
   (:use :common-lisp )
-  (:import-from :fare-matcher
-		:_)
+;  (:import-from :fare-matcher
+;		:_)
   (:export sparql-query
 	   sparql-server-put-data-request
 	   insert-triples
