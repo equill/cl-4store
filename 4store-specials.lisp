@@ -5,6 +5,8 @@
 ;; binary.
 (defvar *4store-text-content-types* 
   (list* '("application". "sparql-results+xml")
+	 '("text" . "tab-separated-values")
+	 '("application" . "sparql-results+json")
          '("application" . "rdf+xml")
          drakma:*text-content-types*))
 

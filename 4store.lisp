@@ -31,14 +31,18 @@
 (defun sparql-server-status-request (server-url)
   (nth-value 1 (drakma:http-request (concatenate 'string server-url "status"))))
 
-(defun sparql-query (server-url query &key (method :get))
+(defun sparql-query (server-url query &key (method :get) (accept "sparql"))
   "Send a SPARQL query to the server, and return the result.
 Expects a valid SPARQL query for its second argument, in the form of a text string.
-Uses GET by default, but the :method keyword argument can be used to force POST, PUT, DELETE or whatever other method tickles your fancy."
+Uses GET by default, but the :method keyword argument can be used to force POST, PUT, DELETE or whatever other method tickles your fancy.
+The :accept keyword allows you to specify which return format to request from 4store:
+- \"sparql\": application/sparql-results+xml (default)
+- \"text\": text/tab-separated-values (more efficient)
+- \"json\": application/sparql-results+json"
   (let ((drakma:*text-content-types* *4store-text-content-types*))
     (drakma:http-request (concatenate 'string server-url "sparql/")
 			 :method method
-			 :accept "text"
+			 :accept accept
 			 :parameters `(("query" . ,query)))))
 
 (defun get-triples-list (server-url)
