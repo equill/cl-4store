@@ -1,12 +1,8 @@
 ;;; ==============================
 
-(defpackage #:4store-build-system (:use :common-lisp :asdf))
-
-(in-package #:4store-build-system)
-
 (defsystem :4store
-  ;; :author  "Patrick D. Logan"
-  ;; :maintainer "James Fleming"
+  :author  "Patrick D. Logan"
+  :maintainer "James Fleming"
   :license "BSD" 
   :description "4store"
   :version "0.0.1"
@@ -17,3 +13,11 @@
                (:file "4store-utils")
                (:file "4store")))
 
+(defsystem :4store-tests
+  :author "James Fleming"
+  :license "BSD" 
+  :depends-on (:4store
+	       :cl-ppcre
+	       :fiveam)
+  :serial t
+  :components ((:file "tests")))
