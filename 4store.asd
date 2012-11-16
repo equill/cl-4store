@@ -20,4 +20,5 @@
 	       :cl-ppcre
 	       :fiveam)
   :serial t
-  :components ((:file "tests")))
+  :components ((:file "test-specials")
+               (:file "tests")))
