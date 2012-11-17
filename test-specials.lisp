@@ -51,3 +51,26 @@
 
 (defparameter *triple-to-delete*
   '("<ox-subjects:first-hash>" "<rdfs:creator>" "Name of the creator"))
+
+(defparameter *depleted-text*
+  "<?xml version=\"1.0\"?>
+<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\">
+  <head>
+    <variable name=\"subject\"/>
+    <variable name=\"predicate\"/>
+    <variable name=\"object\"/>
+  </head>
+  <results>
+    <result>
+      <binding name=\"subject\"><uri>ox-subjects:foo</uri></binding>
+      <binding name=\"predicate\"><uri>ox-predicates:bar</uri></binding>
+      <binding name=\"object\"><literal>plaintext</literal></binding>
+    </result>
+    <result>
+      <binding name=\"subject\"><uri>ox-subjects:first-hash</uri></binding>
+      <binding name=\"predicate\"><uri>rdfs:label</uri></binding>
+      <binding name=\"object\"><literal>Comment on the primacy of labels</literal></binding>
+    </result>
+  </results>
+</sparql>
+")

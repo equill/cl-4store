@@ -25,6 +25,26 @@
                (equalp *initial-text*
                        (4store:get-triples-list *server-url* *graph-name*))))
 
+;; Can we delete one triple?
+(fiveam:test (delete-triple)
+             (fiveam:is
+               (equal 200
+                      (multiple-value-bind (text-response numeric-response)
+                        (4store:delete-triple
+                         *server-url*
+                         *graph-name*
+                         (first *triple-to-delete*)
+                         (second *triple-to-delete*)
+                         (third *triple-to-delete*))
+                        (declare (ignore text-response))
+                        numeric-response))))
+
+;; What's left after we've deleted that?
+(fiveam:test (after-delete)
+             (fiveam:is
+               (equal *depleted-text*
+                      (4store:get-triples-list *server-url* *graph-name*))))
+
 ;; Can we nuke the graph?
 (fiveam:test (delete-graph)
              (fiveam:is (equal
@@ -38,12 +58,3 @@ This is a 4store SPARQL server v1.1.5-27-gc3d8593
              (fiveam:is 
                (equal *empty-graph-text*
                       (4store:get-triples-list *server-url* *graph-name*))))
-
-;; Can we delete one triple?
-(defun test-delete ()
-  (4store:delete-triple
-   *server-url*
-   *graph-name*
-   (first *triple-to-delete*)
-   (second *triple-to-delete*)
-   (third *triple-to-delete*)))
