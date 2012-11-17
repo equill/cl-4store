@@ -104,6 +104,7 @@ http://www.w3.org/TR/sparql11-update/#deleteData"
   "Deletes the identified graph.
 Reference command:
 curl -X DELETE 'http://localhost:8000/data/?graph=http%3A%2F%2Fexample.com%2Fdata'"
-  (drakma:http-request (concatenate 'string server-url "data/?graph=" graph-name)
-		       :method :delete))
+  (drakma:http-request (concatenate 'string server-url "data/")
+                       :method :delete
+                       :parameters `(("graph" . ,graph-name))))
 
