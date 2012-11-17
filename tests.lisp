@@ -29,7 +29,7 @@ This is a 4store SPARQL server v1.1.5-27-gc3d8593
 
 ;; Is the graph empty?
 (fiveam:test (empty-graph)
-             (fiveam:is (equal (4store:get-triples-list *base-uri*) *empty-graph-text*)))
+             (fiveam:is (equal (4store:get-triples-list *base-uri* *graph-name*) *empty-graph-text*)))
 
 ;; Can we delete one triple?
 (defun test-delete ()
