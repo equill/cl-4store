@@ -1,7 +1,7 @@
 (in-package :4store-tests)
 
 (defparameter *base-uri* "http://localhost:8080/")
-(defparameter *graph-name* "demo")
+(defparameter *graph-name* "<ox:demo>")
 
 (defparameter *empty-graph-text*
   "<?xml version=\"1.0\"?>
