@@ -98,24 +98,16 @@ The 'triples argument is expected to be a list of proper lists containing subjec
 		   outstr)))
 
 (defun delete-triple (server-url graph subject predicate object)
-  "Remove one triple from the nominated graph.
-Use with caution; I think it currently deletes the entire graph when used with :method :delete, and returns a parser-error in its current form.
-In theory, it should be as simple as the following query:
-DELETE DATA {
-   GRAPH <http://mygraph.com/blah> {
-      a:b a:c a:d .
-   }
-}"
-  (sparql-update
-   server-url
-   graph
-   (format nil
-	   subject predicate (quote-plaintext object)
-	   "DELETE DATA {
-   GRAPH <http://mygraph.com/blah> {
-      ~A ~A ~A .
-   }
-}")))
+  "Remove one triple from the nominated graph, as per the SPARQL 1.1 spec:
+http://www.w3.org/TR/sparql11-update/#deleteData"
+  (drakma:http-request
+    (concatenate 'string server-url "update/")
+    :method :post
+    :parameters `(("update" . ,(format nil "DELETE DATA { GRAPH ~A { ~A ~A ~A } }"
+                                       (quote-plaintext graph)
+                                       subject
+                                       predicate
+                                       (quote-plaintext object))))))
 
 (defun delete-graph (server-url graph-name)
   "Deletes the identified graph.
