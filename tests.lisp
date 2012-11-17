@@ -27,10 +27,11 @@
 
 ;; Can we nuke the graph?
 (fiveam:test (delete-graph)
-             (fiveam:is (equal (4store:delete-graph *server-url* *graph-name*)
-                               "200 deleted successfully
+             (fiveam:is (equal
+                          "200 deleted successfully
 This is a 4store SPARQL server v1.1.5-27-gc3d8593
-")))
+"
+                          (4store:delete-graph *server-url* *graph-name*))))
 
 ;; Is the graph empty?
 (fiveam:test (empty-graph)
