@@ -20,33 +20,23 @@
 
 (in-package #:4store)  
 
-(defun sparql-server-put-data-request (server-url content-data-pathname url-data-component)
+;;;; Currently untested, as I've no particular expectation of using this.
+(defun sparql-server-put-data-request (server-url graphname filepath)
   "Perform an HTTP put request with the data contained in a file.
-Arguments:
-- the base url pathname of the SPARQL server
-- the path to the file
-- relative URL component (i.e, the graph name)
-
-The full destination of the put request is the concatenation of the supplied URL components
- such that the put request has the form:
- <SERVER-URL>data/<URL-DATA-COMPONENT>
-:EXAMPLE
- \(let \(\(content/component \"organogram-co-2010-10-31-index\"\)\)
-   \(sparql-server-put-data-request
-    \(make-pathname :name content/component
-                   :type \"rdf\"
-                   :defaults *default-pathname-defaults*\)
-    content/component
-    :server-url \"http://localhost:8080/\"\)\)
-:NOTE equivalent of: 
- shell> curl -v -T organogram-co-2010-10-31-index.rdf \\
-       'http://localhost:8080/data/organogram-co-2010-10-31-index'"
-  (declare (string url-data-component))
+  Arguments:
+  - the base url pathname of the SPARQL server
+  - relative URL component (i.e, the graph name)
+  - the path to the file
+  Assumes that the input file is valid RDF/XML"
   (let ((drakma:*text-content-types* *4store-text-content-types*))
-    (drakma:http-request (concatenate 'string server-url "data/" url-data-component)
-			 :method :put
-			 :content content-data-pathname
-			 :content-type "application/rdf+xml" :content-length t)))
+    (drakma:http-request (concatenate 'string server-url "data/" graphname)
+                         ;; Tell 4store to replace the entire graph:
+                         :method :put
+                         :content-type "application/rdf+xml"
+                         :content filepath
+                         ;; Force drakma to compute the content-length instead of
+                         ;; using chunked encoding:
+                         :content-length t)))
 
 (defun sparql-server-status-request (server-url)
   "Returns the numeric HTTP status code from the server.
