@@ -43,6 +43,7 @@
 If all is well, the return code will be 200 (for OK)."
   (nth-value 1 (drakma:http-request (concatenate 'string server-url "status"))))
 
+;;;; Currently tested indirectly, via 'get-triples-list
 (defun sparql-query (server-url query &key (accept "sparql"))
   "Send a SPARQL query to the server, and return the result.
 Expects a valid SPARQL query for its second argument, in the form of a text string.
@@ -63,6 +64,7 @@ Useful for smoke-testing; use with caution, because it returns _everything_."
             "SELECT DISTINCT ?subject ?predicate ?object WHERE { GRAPH ~A { ?subject ?predicate ?object } }"
             graph)))
 
+;;;; Currently tested indirectly, via 'insert-triples
 (defun sparql-update (server-url data &key (method :post))
   "Send a SPARQL update request to the server, and return the result.
 Expects a valid SPARQL query for its second argument, in the form of a text string.
@@ -100,6 +102,7 @@ http://www.w3.org/TR/sparql11-update/#deleteData"
                                        predicate
                                        (quote-plaintext object))))))
 
+;; Syntactically and semantically correct, but fails to actually work
 (defun delete-graph (server-url graph-name)
   "Deletes the identified graph.
 Reference command:
