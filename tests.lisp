@@ -30,3 +30,11 @@ This is a 4store SPARQL server v1.1.5-27-gc3d8593
 (fiveam:test (empty-graph)
              (fiveam:is (equal (4store:get-triples-list *base-uri*) *empty-graph-text*)))
 
+;; Can we delete one triple?
+(defun test-delete ()
+  (4store:delete-triple
+   *base-uri*
+   *graph-name*
+   (first *triple-to-delete*)
+   (second *triple-to-delete*)
+   (third *triple-to-delete*)))

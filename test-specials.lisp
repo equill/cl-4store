@@ -48,3 +48,6 @@
   </results>
 </sparql>
 ")
+
+(defparameter *triple-to-delete*
+  '("<ox-subjects:first-hash>" "<rdfs:creator>" "Name of the creator"))
