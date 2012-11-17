@@ -43,28 +43,25 @@
 If all is well, the return code will be 200 (for OK)."
   (nth-value 1 (drakma:http-request (concatenate 'string server-url "status"))))
 
-(defun sparql-query (server-url graph query &key (method :get) (accept "sparql"))
+(defun sparql-query (server-url query &key (accept "sparql"))
   "Send a SPARQL query to the server, and return the result.
 Expects a valid SPARQL query for its second argument, in the form of a text string.
-Uses GET by default, but the :method keyword argument can be used to force POST, PUT, DELETE or whatever other method tickles your fancy.
-The :accept keyword allows you to specify which return format to request from 4store:
 - \"sparql\": application/sparql-results+xml (default)
 - \"text\": text/tab-separated-values (more efficient)
 - \"json\": application/sparql-results+json"
   (let ((drakma:*text-content-types* *4store-text-content-types*))
     (drakma:http-request (concatenate 'string server-url "sparql/")
-                         :method method
                          :accept accept
-                         :parameters `(("graph". ,graph)
-                                       ("query" . ,query)))))
+                         :parameters `(("query" . ,query)))))
 
 (defun get-triples-list (server-url graph)
   "Retrieves all triples in the store.
-  Useful for smoke-testing; use with caution, because it returns _everything_."
+Useful for smoke-testing; use with caution, because it returns _everything_."
   (sparql-query
     server-url
-    graph
-    "SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }"))
+    (format nil
+            "SELECT DISTINCT ?subject ?predicate ?object WHERE { GRAPH ~A { ?subject ?predicate ?object } }"
+            graph)))
 
 (defun sparql-update (server-url data &key (method :post))
   "Send a SPARQL update request to the server, and return the result.
