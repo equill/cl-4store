@@ -66,29 +66,30 @@ The :accept keyword allows you to specify which return format to request from 4s
     graph
     "SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }"))
 
-(defun sparql-update (server-url graph data &key (method :post))
+(defun sparql-update (server-url data &key (method :post))
   "Send a SPARQL update request to the server, and return the result.
 Expects a valid SPARQL query for its second argument, in the form of a text string.
-Uses GET by default, but the :method keyword argument can be used to force POST, PUT, DELETE or whatever other method tickles your fancy."
-  (drakma:http-request (concatenate 'string server-url "data/")
-		       :method method
-		       :parameters `(("data" . ,data)
-				     ("graph" . ,graph)
-				     ("mime-type" . "application/x-turtle"))))
+Uses POST by default, but the :method keyword argument can be used to force POST, PUT, DELETE or whatever other method tickles your fancy."
+  (drakma:http-request (concatenate 'string server-url "update/")
+                       :method method
+                       :parameters `(("update" . ,data)
+                                     ("mime-type" . "application/x-turtle"))))
 
 (defun insert-triples (server-url graph triples)
   "Inserts a list of triples into the connected store.
 The 'triples argument is expected to be a list of proper lists containing subject, predicate and object"
-  (sparql-update server-url
-		 graph
-		 (with-output-to-string
-		   (outstr)
-		   (mapcar #'(lambda (triple)
-			       (format outstr "~A ~A ~A .~%"
-				       (first triple)
-				       (second triple) (quote-plaintext (third triple))))
-			   triples)
-		   outstr)))
+(sparql-update server-url
+               (with-output-to-string
+                 (outstr)
+                 (format outstr "INSERT DATA { GRAPH ~A { " graph)
+                 (mapcar #'(lambda (triple)
+                             (format outstr "~A ~A ~A . "
+                                     (first triple)
+                                     (second triple)
+                                     (quote-plaintext (third triple))))
+                         triples)
+                 (format outstr "} } ")
+                 outstr)))
 
 (defun delete-triple (server-url graph subject predicate object)
   "Remove one triple from the nominated graph, as per the SPARQL 1.1 spec:

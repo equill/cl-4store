@@ -9,10 +9,15 @@
 	      (= 200 (4store:sparql-server-status-request *server-url*))))
 
 ;; Can we store a set of triples?
+;; Yes, this looks a little convoluted, but I'd rather rely on the HTTP code
+;; than the response text
 (fiveam:test (insert-triples)
              (fiveam:is
-               (cl-ppcre:scan "200 added successfully"
-                              (4store:insert-triples *server-url* *graph-name* *initial-triples*))))
+               (equal 200
+                      (multiple-value-bind (text-response numeric-response)
+                        (4store:insert-triples *server-url* *graph-name* *initial-triples*)
+                        (declare (ignore text-response))
+                        numeric-response))))
 
 ;; Do we get the correct set of triples back?
 (fiveam:test (get-triples)
