@@ -17,7 +17,8 @@
 ;; Do we get the correct set of triples back?
 (fiveam:test (get-triples)
 	     (fiveam:is
-	      (equalp (4store:get-triples-list *base-uri*) *initial-text*)))
+	      (equalp (4store:get-triples-list *base-uri* *graph-name*)
+                  *initial-text*)))
 
 ;; Can we nuke the graph?
 (fiveam:test (delete-graph)
