@@ -43,17 +43,26 @@
 If all is well, the return code will be 200 (for OK)."
   (nth-value 1 (drakma:http-request (concatenate 'string server-url "status"))))
 
+(defun tsv-to-lists (tsv)
+  "Convert a 4store TSV result string to a list of lisp lists"
+  (delete-if #'null
+             (with-input-from-string (instr tsv)
+               (loop for line = (read-line instr nil nil)
+                     while line collect (unless (cl-ppcre:scan "^\\?" line)
+                                          (split-sequence:split-sequence #\Tab line))))))
+
 ;;;; Currently tested indirectly, via 'get-triples-list
-(defun sparql-query (server-url query &key (accept "sparql"))
+(defun sparql-query (server-url query)
   "Send a SPARQL query to the server, and return the result.
 Expects a valid SPARQL query for its second argument, in the form of a text string.
 - \"sparql\": application/sparql-results+xml (default)
 - \"text\": text/tab-separated-values (more efficient)
 - \"json\": application/sparql-results+json"
-  (let ((drakma:*text-content-types* *4store-text-content-types*))
-    (drakma:http-request (concatenate 'string server-url "sparql/")
-                         :accept accept
-                         :parameters `(("query" . ,query)))))
+  (tsv-to-lists
+    (let ((drakma:*text-content-types* *4store-text-content-types*))
+      (drakma:http-request (concatenate 'string server-url "sparql/")
+                           :parameters `(("query" . ,query)
+                                         ("output" . "text"))))))
 
 (defun get-triples-list (server-url graph)
   "Retrieves all triples in the store.
