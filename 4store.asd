@@ -6,7 +6,8 @@
   :license "BSD" 
   :description "4store"
   :version "0.0.1"
-  :depends-on (:drakma)
+  :depends-on (:drakma
+                :split-sequence)
   :serial t
   :components ((:file "package")
                (:file "4store-specials")
