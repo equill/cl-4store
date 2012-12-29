@@ -2,7 +2,7 @@
 
 (defun angle-bracket-delimited-p (str)
   "Detects whether a string is delimited by angle-brackets."
-  (cl-ppcre:scan "^<[:\\w]+>$" str))
+  (cl-ppcre:scan "^<.+>$" str))
 
 (defun quote-plaintext (str)
   "Wraps the string in quotes if it isn't delimited by angle-brackets.
