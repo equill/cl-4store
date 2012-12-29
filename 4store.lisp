@@ -111,6 +111,23 @@ http://www.w3.org/TR/sparql11-update/#deleteData"
                                        predicate
                                        (quote-plaintext object))))))
 
+(defun delete-triples (server-url graph triples)
+  "Remove the supplied set of triples from the graph.
+  Expects the 'triples argument to be a list of three-element lists.
+  If the Object is plain text, it's expected to already be quoted."
+  (sparql-update server-url
+                 (with-output-to-string
+                   (outstr)
+                   (format outstr "DELETE DATA { GRAPH ~A { " graph)
+                   (mapcar #'(lambda (triple)
+                               (format outstr "~A ~A ~A . "
+                                       (first triple)
+                                       (second triple)
+                                       (third triple)))
+                           triples)
+                   (format outstr "} } ")
+                   outstr)))
+
 ;; Syntactically and semantically correct, but fails to actually work
 (defun delete-graph (server-url graph-name)
   "Deletes the identified graph.
