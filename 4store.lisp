@@ -94,7 +94,7 @@ The 'triples argument is expected to be a list of proper lists containing subjec
                              (format outstr "~A ~A ~A . "
                                      (first triple)
                                      (second triple)
-                                     (quote-plaintext (third triple))))
+                                     (third triple)))
                          triples)
                  (format outstr "} } ")
                  outstr)))
@@ -106,10 +106,10 @@ http://www.w3.org/TR/sparql11-update/#deleteData"
     (concatenate 'string server-url "update/")
     :method :post
     :parameters `(("update" . ,(format nil "DELETE DATA { GRAPH ~A { ~A ~A ~A } }"
-                                       (quote-plaintext graph)
+                                       graph
                                        subject
                                        predicate
-                                       (quote-plaintext object))))))
+                                       object)))))
 
 (defun delete-triples (server-url graph triples)
   "Remove the supplied set of triples from the graph.
