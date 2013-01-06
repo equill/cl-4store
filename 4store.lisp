@@ -52,26 +52,28 @@ If all is well, the return code will be 200 (for OK)."
                                           (split-sequence:split-sequence #\Tab line))))))
 
 ;;;; Currently tested indirectly, via 'get-triples-list
-(defun sparql-query (server-url query)
+(defun sparql-query (server-url graph return-vars query-params)
   "Send a SPARQL query to the server, and return the result.
-Expects a valid SPARQL query for its second argument, in the form of a text string.
-- \"sparql\": application/sparql-results+xml (default)
-- \"text\": text/tab-separated-values (more efficient)
-- \"json\": application/sparql-results+json"
+Expects a valid SPARQL query for its second argument, in the form of a text string."
   (tsv-to-lists
     (let ((drakma:*text-content-types* *4store-text-content-types*))
-      (drakma:http-request (concatenate 'string server-url "sparql/")
-                           :parameters `(("query" . ,query)
-                                         ("output" . "text"))))))
+      (drakma:http-request
+        (concatenate 'string server-url "sparql/")
+        :parameters `(("query" .
+                       ,(format nil "SELECT DISTINCT ~{?~A ~} WHERE { GRAPH ~A { ~{~{~A ~}~^.~%~} } }"
+                               return-vars
+                               graph
+                               query-params))
+                      ("output" . "text"))))))
 
 (defun get-triples-list (server-url graph)
   "Retrieves all triples in the store.
 Useful for smoke-testing; use with caution, because it returns _everything_."
   (sparql-query
     server-url
-    (format nil
-            "SELECT DISTINCT ?subject ?predicate ?object WHERE { GRAPH ~A { ?subject ?predicate ?object } }"
-            graph)))
+    graph
+    '("subject" "predicate" "object")
+    '(("?subject" "?predicate" "?object"))))
 
 ;;;; Currently tested indirectly, via 'insert-triples
 (defun sparql-update (server-url data &key (method :post))
