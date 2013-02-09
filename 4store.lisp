@@ -101,18 +101,6 @@ The 'triples argument is expected to be a list of proper lists containing subjec
                  (format outstr "} } ")
                  outstr)))
 
-(defun delete-triple (server-url graph subject predicate object)
-  "Remove one triple from the nominated graph, as per the SPARQL 1.1 spec:
-http://www.w3.org/TR/sparql11-update/#deleteData"
-  (drakma:http-request
-    (concatenate 'string server-url "update/")
-    :method :post
-    :parameters `(("update" . ,(format nil "DELETE DATA { GRAPH ~A { ~A ~A ~A } }"
-                                       graph
-                                       subject
-                                       predicate
-                                       object)))))
-
 (defun delete-triples (server-url graph triples)
   "Remove the supplied set of triples from the graph.
   Expects the 'triples argument to be a list of three-element lists.
@@ -129,6 +117,10 @@ http://www.w3.org/TR/sparql11-update/#deleteData"
                            triples)
                    (format outstr "} } ")
                    outstr)))
+
+(defun delete-all-triples (server-url graph)
+  "Deletes _all_ triples in the specified graph."
+  (delete-triples server-url graph (get-triples-list server-url graph)))
 
 ;; Syntactically and semantically correct, but fails to actually work
 (defun delete-graph (server-url graph-name)
