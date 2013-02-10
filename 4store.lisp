@@ -52,18 +52,22 @@ If all is well, the return code will be 200 (for OK)."
                                           (split-sequence:split-sequence #\Tab line))))))
 
 ;;;; Currently tested indirectly, via 'get-triples-list
-(defun sparql-query (server-url graph return-vars query-params)
+(defun sparql-query (server-url graph return-vars query-params &optional optional-params)
   "Send a SPARQL query to the server, and return the result.
 Expects a valid SPARQL query for its second argument, in the form of a text string."
   (tsv-to-lists
-    (let ((drakma:*text-content-types* *4store-text-content-types*))
+    (let ((drakma:*text-content-types* *4store-text-content-types*)
+          (optional-parameters (if optional-params
+                                 (format nil ".~% OPTIONAL { ~{~{~A ~}~^.~%~} } " optional-params)
+                                 "")))
       (drakma:http-request
         (concatenate 'string server-url "sparql/")
         :parameters `(("query" .
-                       ,(format nil "SELECT DISTINCT ~{?~A ~} WHERE { GRAPH ~A { ~{~{~A ~}~^.~%~} } }"
+                       ,(format nil "SELECT DISTINCT ~{?~A ~} WHERE { GRAPH ~A { ~{~{~A ~}~^.~%~}~A } }"
                                return-vars
                                graph
-                               query-params))
+                               query-params
+                               optional-parameters))
                       ("output" . "text"))))))
 
 (defun get-triples-list (server-url graph)
