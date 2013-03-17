@@ -1,5 +1,3 @@
-;;; ==============================
-
 (defsystem :4store
            :author  "Patrick D. Logan"
            :maintainer "James Fleming"
@@ -12,13 +10,3 @@
            :components ((:file "defpackage")
                         (:file "4store-specials")
                         (:file "4store")))
-
-(defsystem :4store-tests
-  :author "James Fleming"
-  :license "BSD" 
-  :depends-on (:4store
-	       :cl-ppcre
-	       :fiveam)
-  :serial t
-  :components ((:file "test-specials")
-               (:file "tests")))
