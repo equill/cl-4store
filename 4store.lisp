@@ -4,8 +4,7 @@
 ;; 'workspace' code for exploring a 4store RDF knowledgebase using Steel Bank
 ;; Common Lisp.
 ;;
-;; We forked and have begun adapting it to be a more asdf friendly and by proxy
-;; Quicklisp installable.
+;; It has been modified a little since then.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
@@ -20,7 +19,7 @@
 
 (in-package #:4store)  
 
-;;;; Currently untested, as I've no particular expectation of using this.
+;;;; Currently untested
 (defun sparql-server-put-data-request (server-url graphname filepath)
   "Perform an HTTP put request with the data contained in a file.
   Arguments:
@@ -53,8 +52,20 @@ If all is well, the return code will be 200 (for OK)."
 
 ;;;; Currently tested indirectly, via 'get-triples-list
 (defun sparql-query (server-url graph return-vars query-params &optional optional-params)
-  "Send a SPARQL query to the server, and return the result.
-Expects a valid SPARQL query for its second argument, in the form of a text string."
+  "Send a SPARQL query to the server, and return the result in TSV format.
+  XML and JSON are available as return formats in 4store, but TSV is faster and
+  simpler to parse into lists for further processing.
+  Arguments:
+  - server-url (bare string)
+  - graph ID (string containing the URI serving as the graph ID)
+  - return-vars: a list of strings naming the return variables. Question-marks
+    are prepended automatically.
+  - query-params: a list of the triples that comprise the query itself. It's
+    currently necessary to manually prepend question-marks to the return-var
+    names here.
+  - optional-params: a list of optional query-triples. If one or more of the
+    return-vars is optional, put the relevant query-triples here. If they can be
+    satisfied, the resulting value will be returned; if not, NIL is returned."
   (tsv-to-lists
     (let ((drakma:*text-content-types* *4store-text-content-types*)
           (optional-parameters (if optional-params
@@ -64,15 +75,16 @@ Expects a valid SPARQL query for its second argument, in the form of a text stri
         (concatenate 'string server-url "sparql/")
         :parameters `(("query" .
                        ,(format nil "SELECT DISTINCT ~{?~A ~} WHERE { GRAPH ~A { ~{~{~A ~}~^.~%~}~A } }"
-                               return-vars
-                               graph
-                               query-params
-                               optional-parameters))
+                                return-vars
+                                graph
+                                query-params
+                                optional-parameters))
                       ("output" . "text"))))))
 
 (defun get-triples-list (server-url graph)
   "Retrieves all triples in the store.
-Useful for smoke-testing; use with caution, because it returns _everything_."
+  Useful for smoke-testing; use with caution in large stores, because it returns
+  _everything_."
   (sparql-query
     server-url
     graph
@@ -82,28 +94,30 @@ Useful for smoke-testing; use with caution, because it returns _everything_."
 ;;;; Currently tested indirectly, via 'insert-triples
 (defun sparql-update (server-url data &key (method :post))
   "Send a SPARQL update request to the server, and return the result.
-Expects a valid SPARQL query for its second argument, in the form of a text string.
-Uses POST by default, but the :method keyword argument can be used to force POST, PUT, DELETE or whatever other method tickles your fancy."
+  Expects a valid SPARQL query for its second argument, in a text string.
+  Uses POST by default, but the :method keyword argument can be used to force
+  POST, PUT, DELETE or whatever other method tickles your fancy."
   (drakma:http-request (concatenate 'string server-url "update/")
                        :method method
                        :parameters `(("update" . ,data)
                                      ("mime-type" . "application/x-turtle"))))
 
 (defun insert-triples (server-url graph triples)
-  "Inserts a list of triples into the connected store.
-The 'triples argument is expected to be a list of proper lists containing subject, predicate and object"
-(sparql-update server-url
-               (with-output-to-string
-                 (outstr)
-                 (format outstr "INSERT DATA { GRAPH ~A { " graph)
-                 (mapcar #'(lambda (triple)
-                             (format outstr "~A ~A ~A . "
-                                     (first triple)
-                                     (second triple)
-                                     (third triple)))
-                         triples)
-                 (format outstr "} } ")
-                 outstr)))
+  "Inserts a list of triples into the store.
+  The 'triples argument is expected to be a list of proper lists, each
+  containing subject, predicate and object."
+  (sparql-update server-url
+                 (with-output-to-string
+                   (outstr)
+                   (format outstr "INSERT DATA { GRAPH ~A { " graph)
+                   (mapcar #'(lambda (triple)
+                               (format outstr "~A ~A ~A . "
+                                       (first triple)
+                                       (second triple)
+                                       (third triple)))
+                           triples)
+                   (format outstr "} } ")
+                   outstr)))
 
 (defun delete-triples (server-url graph triples)
   "Remove the supplied set of triples from the graph.
@@ -126,11 +140,10 @@ The 'triples argument is expected to be a list of proper lists containing subjec
   "Deletes _all_ triples in the specified graph."
   (delete-triples server-url graph (get-triples-list server-url graph)))
 
-;; Syntactically and semantically correct, but fails to actually work
 (defun delete-graph (server-url graph-name)
   "Deletes the identified graph.
-Reference command:
-curl -X DELETE 'http://localhost:8000/data/?graph=http%3A%2F%2Fexample.com%2Fdata'"
+  Currently known not to work; despite being semantically correct and receiving
+  a success code from the server."
   (drakma:http-request (concatenate 'string server-url "data/")
                        :method :delete
                        :parameters `(("graph" . ,graph-name))))
