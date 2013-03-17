@@ -6,6 +6,7 @@
            :depends-on (:4store
                          :fiveam
                          :cl-ppcre)
-           :components ((:file "4store-test-specials")
+           :components ((:file "defpackage-tests")
+                        (:file "4store-test-specials")
                         (:file "4store-tests"))
            :serial t)
