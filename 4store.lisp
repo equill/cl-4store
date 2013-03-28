@@ -140,7 +140,8 @@ If all is well, the return code will be 200 (for OK)."
 
 (defun delete-all-triples (server-url graph)
   "Deletes _all_ triples in the specified graph."
-  (delete-triples server-url graph (get-triples-list server-url graph)))
+  (let ((triples (get-triples-list server-url graph)))
+    (when triples (delete-triples server-url graph triples))))
 
 (defun delete-graph (server-url graph-name)
   "Deletes the identified graph.
