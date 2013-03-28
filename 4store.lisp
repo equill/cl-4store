@@ -59,15 +59,16 @@ If all is well, the return code will be 200 (for OK)."
   - server-url (bare string)
   - graph ID (string containing the URI serving as the graph ID)
   - return-vars: a list of strings naming the return variables. Question-marks
-    are prepended automatically.
+  are prepended automatically.
   - query-params: a list of the triples that comprise the query itself. It's
-    currently necessary to manually prepend question-marks to the return-var
-    names here.
+  currently necessary to manually prepend question-marks to the return-var
+  names here.
   - optional-params: a list of optional query-triples. If one or more of the
-    return-vars is optional, put the relevant query-triples here. If they can be
-    satisfied, the resulting value will be returned; if not, NIL is returned."
+  return-vars is optional, put the relevant query-triples here. If they can be
+  satisfied, the resulting value will be returned; if not, NIL is returned."
   (tsv-to-lists
     (let ((drakma:*text-content-types* *4store-text-content-types*)
+          (drakma:*drakma-default-external-format* :utf-8)
           (optional-parameters (if optional-params
                                  (format nil ".~% OPTIONAL { ~{~{~A ~}~^.~%~} } " optional-params)
                                  "")))
@@ -97,10 +98,11 @@ If all is well, the return code will be 200 (for OK)."
   Expects a valid SPARQL query for its second argument, in a text string.
   Uses POST by default, but the :method keyword argument can be used to force
   POST, PUT, DELETE or whatever other method tickles your fancy."
-  (drakma:http-request (concatenate 'string server-url "update/")
-                       :method method
-                       :parameters `(("update" . ,data)
-                                     ("mime-type" . "application/x-turtle"))))
+  (let ((drakma:*drakma-default-external-format* :utf-8))
+    (drakma:http-request (concatenate 'string server-url "update/")
+                         :method method
+                         :parameters `(("update" . ,data)
+                                       ("mime-type" . "application/x-turtle")))))
 
 (defun insert-triples (server-url graph triples)
   "Inserts a list of triples into the store.
